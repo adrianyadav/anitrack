@@ -1,6 +1,7 @@
 import { getTopAnime, getAnimeByGenre, getSeasonalAnime } from "@/lib/jikan";
 import { auth } from "@/lib/auth";
 import { getUserGenres } from "@/lib/actions/preferences";
+import { getUserWatchingOrWatchedMalIds } from "@/lib/actions/anime";
 import { AnimeCard } from "@/components/anime-card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -16,8 +17,13 @@ export default async function HomePage() {
 
   // Genre-based recommendations if logged in
   let recommendedAnime = null;
+  let excludeMalIds = new Set<number>();
   if (session?.user?.id) {
-    const genres = await getUserGenres(session.user.id);
+    const [genres, watchingOrWatchedIds] = await Promise.all([
+      getUserGenres(session.user.id),
+      getUserWatchingOrWatchedMalIds(session.user.id),
+    ]);
+    excludeMalIds = watchingOrWatchedIds;
     if (genres.length > 0) {
       const genreMap: Record<string, number> = {
         Action: 1, Adventure: 2, Comedy: 4, Drama: 8, Fantasy: 10,
@@ -34,6 +40,9 @@ export default async function HomePage() {
       }
     }
   }
+
+  const filteredRecommendations =
+    recommendedAnime?.data.filter((anime) => !excludeMalIds.has(anime.mal_id)).slice(0, 10) ?? [];
 
   return (
     <div className="space-y-12">
@@ -63,14 +72,14 @@ export default async function HomePage() {
       </section>
 
       {/* Personalized Recommendations */}
-      {recommendedAnime && recommendedAnime.data.length > 0 && (
+      {filteredRecommendations.length > 0 && (
         <section>
           <div className="mb-6 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             <h2 className="text-2xl font-bold">Recommended for You</h2>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {recommendedAnime.data.slice(0, 10).map((anime) => (
+            {filteredRecommendations.map((anime) => (
               <AnimeCard key={anime.mal_id} anime={anime} />
             ))}
           </div>

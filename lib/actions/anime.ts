@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { userAnime } from "@/lib/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function toggleFavorite(
@@ -96,6 +96,21 @@ export async function removeFromList(malId: number) {
 
   revalidatePath("/my-list");
   revalidatePath(`/anime/${malId}`);
+}
+
+export async function getUserWatchingOrWatchedMalIds(
+  userId: string
+): Promise<Set<number>> {
+  const rows = await db
+    .select({ malId: userAnime.malId })
+    .from(userAnime)
+    .where(
+      and(
+        eq(userAnime.userId, userId),
+        inArray(userAnime.status, ["watching", "watched"])
+      )
+    );
+  return new Set(rows.map((r) => r.malId));
 }
 
 export async function getUserAnimeList(userId: string) {
