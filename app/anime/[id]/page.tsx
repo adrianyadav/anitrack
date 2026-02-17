@@ -39,7 +39,7 @@ export default async function AnimeDetailPage({ params }: AnimeDetailPageProps) 
         <div className="flex flex-col gap-8 md:flex-row">
           {/* Poster */}
           <div className="shrink-0">
-            <div className="relative aspect-[3/4] w-56 overflow-hidden rounded-lg neon-glow">
+            <div className="relative aspect-3/4 w-56 overflow-hidden rounded-lg neon-glow">
               <Image
                 src={anime.images.webp.large_image_url || anime.images.jpg.large_image_url}
                 alt={title}

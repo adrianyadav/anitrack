@@ -14,7 +14,7 @@ export function AnimeCard({ anime }: AnimeCardProps) {
   return (
     <Link href={`/anime/${anime.mal_id}`} className="group block">
       <div className="relative overflow-hidden rounded-lg border border-border/50 bg-card transition-all duration-300 hover:neon-glow hover:scale-[1.02]">
-        <div className="relative aspect-[3/4] w-full overflow-hidden">
+        <div className="relative aspect-3/4 w-full overflow-hidden">
           <Image
             src={anime.images.webp.large_image_url || anime.images.jpg.large_image_url}
             alt={title}
