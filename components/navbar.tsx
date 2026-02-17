@@ -25,7 +25,7 @@ export async function Navbar() {
           <div className="hidden items-center gap-6 md:flex">
             <Link
               href="/browse"
-              className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+              className="cursor-pointer flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
             >
               <Search className="h-4 w-4" />
               Browse
@@ -33,7 +33,7 @@ export async function Navbar() {
             {session && (
               <Link
                 href="/my-list"
-                className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+                className="cursor-pointer flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
               >
                 <Heart className="h-4 w-4" />
                 My List
@@ -61,13 +61,13 @@ export async function Navbar() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/my-list" className="flex items-center gap-2">
+                  <Link href="/my-list" className="cursor-pointer flex items-center gap-2">
                     <Heart className="h-4 w-4" />
                     My List
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/preferences" className="flex items-center gap-2">
+                  <Link href="/preferences" className="cursor-pointer flex items-center gap-2">
                     <Settings className="h-4 w-4" />
                     Preferences
                   </Link>
@@ -80,7 +80,7 @@ export async function Navbar() {
                       await signOut({ redirectTo: "/" });
                     }}
                   >
-                    <button type="submit" className="flex w-full items-center gap-2">
+                    <button type="submit" className="cursor-pointer flex w-full items-center gap-2">
                       <LogOut className="h-4 w-4" />
                       Sign out
                     </button>
