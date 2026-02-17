@@ -2,8 +2,8 @@
 
 import { useOptimistic, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Eye, Play } from "lucide-react";
-import { toggleFavorite, setAnimeStatus } from "@/lib/actions/anime";
+import { Heart, Eye, Play, Trash2 } from "lucide-react";
+import { toggleFavorite, setAnimeStatus, removeFromList } from "@/lib/actions/anime";
 import { toast } from "sonner";
 
 interface AnimeActionsProps {
@@ -26,6 +26,10 @@ export function AnimeActions({
   const [isPending, startTransition] = useTransition();
   const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(isFavorite);
   const [optimisticStatus, setOptimisticStatus] = useOptimistic(status);
+  const [optimisticInList, addOptimisticInList] = useOptimistic(
+    isFavorite || !!status,
+    (_current, value: boolean) => value
+  );
 
   if (!isAuthenticated) {
     return (
@@ -53,6 +57,14 @@ export function AnimeActions({
           ? `Marked as ${finalStatus}`
           : "Removed from your list"
       );
+    });
+  }
+
+  function handleRemove() {
+    startTransition(async () => {
+      addOptimisticInList(false);
+      await removeFromList(malId);
+      toast.success("Removed from your list");
     });
   }
 
@@ -85,6 +97,17 @@ export function AnimeActions({
         <Eye className="mr-2 h-4 w-4" />
         {optimisticStatus === "watched" ? "Watched" : "Set Watched"}
       </Button>
+      {optimisticInList && (
+        <Button
+          variant="outline"
+          onClick={handleRemove}
+          disabled={isPending}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          Remove from list
+        </Button>
+      )}
     </div>
   );
 }

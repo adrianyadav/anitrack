@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, Eye, Play } from "lucide-react";
-import { toggleFavorite, setAnimeStatus } from "@/lib/actions/anime";
+import { Heart, Eye, Play, Trash2 } from "lucide-react";
+import { toggleFavorite, setAnimeStatus, removeFromList } from "@/lib/actions/anime";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
@@ -37,6 +37,13 @@ export function UserAnimeCard({
     startTransition(async () => {
       await setAnimeStatus(malId, title, imageUrl ?? "", newStatus);
       toast.success(newStatus ? `Marked as ${newStatus}` : "Removed status");
+    });
+  }
+
+  function handleDelete() {
+    startTransition(async () => {
+      await removeFromList(malId);
+      toast.success("Removed from your list");
     });
   }
 
@@ -107,6 +114,16 @@ export function UserAnimeCard({
           >
             <Eye className={`mr-1 h-3 w-3 ${status === "watched" ? "text-primary" : ""}`} />
             Watched
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDelete}
+            disabled={isPending}
+            className="h-7 px-2 text-xs text-destructive hover:text-destructive"
+          >
+            <Trash2 className="mr-1 h-3 w-3" />
+            Delete
           </Button>
         </div>
       </div>

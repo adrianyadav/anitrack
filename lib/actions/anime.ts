@@ -84,6 +84,20 @@ export async function setAnimeStatus(
   revalidatePath(`/anime/${malId}`);
 }
 
+export async function removeFromList(malId: number) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Not authenticated" };
+
+  await db
+    .delete(userAnime)
+    .where(
+      and(eq(userAnime.userId, session.user.id), eq(userAnime.malId, malId))
+    );
+
+  revalidatePath("/my-list");
+  revalidatePath(`/anime/${malId}`);
+}
+
 export async function getUserAnimeList(userId: string) {
   return db.select().from(userAnime).where(eq(userAnime.userId, userId));
 }
